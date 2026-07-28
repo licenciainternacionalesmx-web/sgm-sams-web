@@ -1,0 +1,22 @@
+{
+  "status": "pending_review",
+  "policy_code": "SGM-COMPLIANCE-01",
+  "policy_version": "1.2",
+  "jurisdiction": {
+    "scope": "multi_jurisdiction",
+    "detected_country": null,
+    "country_detection_status": "pending",
+    "applicable_law": null,
+    "law_detection_status": "pending"
+  },
+  "review_type": "automated_policy_review",
+  "human_approval_required": false,
+  "publication_allowed": false,
+  "decision": "pending",
+  "original_content_preserved": true,
+  "automated_correction_allowed": true,
+  "crm_trace_required": true,
+  "approved_by": null,
+  "approved_at": null,
+  "next_action": "detect_jurisdiction"
+}
