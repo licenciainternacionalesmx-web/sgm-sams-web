@@ -45,11 +45,46 @@
       ]
     },
     {
-      "parameters": {},
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appEYY7jkfaZHWExU",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl6cPc3yjbFLkoqp",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fldrRCofzm2292lHN": "={{ $json.folio }}",
+            "fldkWzmu2Qa28ppQL": "={{ $json.lead.name }}",
+            "fldEx9B2A21sfx2aP": "={{ $json.lead.email || '' }}",
+            "fldcS78hAGhvHrPaI": "={{ $json.lead.whatsapp }}",
+            "fldAIQiPNcuQvONIq": "={{ JSON.stringify({ service: $json.lead.service, location: $json.lead.location, destination: $json.lead.destination, message: $json.lead.message, source: $json.source, compliance: $json.compliance, operational_state: $json.operational_state }) }}",
+            "fldXwBmAN9HLTNFjF": "={{ $now.toISODate() }}",
+            "fldYebt5uHnMArDg9": "={{ $json.folio }}",
+            "fldP4VpCi3bWxFdBI": "={{ $json.folio }}",
+            "fldBYqZ7V6JCmG5LV": "={{ $json.lead.name }}",
+            "fldYNj1vA0KRtvfhw": "={{ $json.lead.email || '' }}",
+            "fld5wPKP299MGITEJ": "={{ $json.lead.whatsapp }}",
+            "fld6lOlB9tTzIwJVc": "website_frontdesk",
+            "flddSYUNwkVt3Unli": "={{ $json.lead.consent === true }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "typecast": false
+        }
+      },
       "id": "crm",
-      "name": "Puente CRM — configurar Airtable",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
+      "name": "Crear expediente en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
       "position": [
         160,
         0
@@ -58,7 +93,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: true, folio: $json.folio, compliance_status: $json.compliance.status, next_action: $json.compliance.next_action, crm_trace_required: true } }}",
+        "responseBody": "={{ { ok: true, folio: $node[\"Aplicar COMPLIANCE-01\"].json.folio, airtable_record_id: $json.id || null, compliance_status: $node[\"Aplicar COMPLIANCE-01\"].json.compliance.status, next_action: $node[\"Aplicar COMPLIANCE-01\"].json.compliance.next_action, operational_state: \"registered_in_crm\", crm_trace_required: true } }}",
         "options": {
           "responseCode": 202
         }
@@ -100,14 +135,14 @@
       "main": [
         [
           {
-            "node": "Puente CRM — configurar Airtable",
+            "node": "Crear expediente en Airtable",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Puente CRM — configurar Airtable": {
+    "Crear expediente en Airtable": {
       "main": [
         [
           {
@@ -130,7 +165,10 @@
   "active": false,
   "versionId": "00000000-0000-4000-8000-000000000001",
   "meta": {
-    "templateCredsSetupCompleted": false
+    "templateCredsSetupCompleted": false,
+    "airtableCredentialRequired": true,
+    "airtableBase": "SGM-SAMS CORE",
+    "airtableTable": "Expedientes Clientes SGM–SAMS"
   },
   "tags": []
 }
