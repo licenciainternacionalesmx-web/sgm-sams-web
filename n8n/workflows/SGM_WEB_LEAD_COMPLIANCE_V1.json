@@ -1,0 +1,136 @@
+{
+  "name": "SGM_WEB_LEAD_COMPLIANCE_V1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sgm-web-lead-v1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Entrada SiteGround",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        0
+      ],
+      "webhookId": "sgm-web-lead-v1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.body ?? $json;\nconst lead = input.lead ?? {};\nif (!input.folio || !lead.name || !lead.whatsapp || !lead.service || lead.consent !== true) {\n  throw new Error('Solicitud incompleta o sin consentimiento');\n}\nreturn [{ json: {\n  ...input,\n  workflow: 'SGM_WEB_LEAD_COMPLIANCE_V1',\n  normalized_at: new Date().toISOString(),\n  operational_state: 'captured'\n}}];"
+      },
+      "id": "normalize",
+      "name": "Validar y normalizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $json;\nconst c = item.compliance ?? {};\nconst destination = String(item.lead?.destination ?? '').trim();\nconst detected = destination || null;\nconst jurisdiction = {\n  scope: 'multi_jurisdiction',\n  detected_country: detected,\n  country_detection_status: detected ? 'detected_from_destination' : 'pending',\n  applicable_law: null,\n  law_detection_status: 'pending'\n};\nreturn [{ json: {\n  ...item,\n  compliance: {\n    ...c,\n    status: 'pending_review',\n    policy_code: 'SGM-COMPLIANCE-01',\n    policy_version: '1.2',\n    jurisdiction,\n    human_approval_required: false,\n    publication_allowed: false,\n    decision: 'pending',\n    crm_trace_required: true,\n    next_action: detected ? 'automated_policy_review' : 'detect_jurisdiction'\n  },\n  operational_state: 'classified'\n}}];"
+      },
+      "id": "compliance",
+      "name": "Aplicar COMPLIANCE-01",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "crm",
+      "name": "Puente CRM — configurar Airtable",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, folio: $json.folio, compliance_status: $json.compliance.status, next_action: $json.compliance.next_action, crm_trace_required: true } }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "respond",
+      "name": "Responder a SiteGround",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        420,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Entrada SiteGround": {
+      "main": [
+        [
+          {
+            "node": "Validar y normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y normalizar": {
+      "main": [
+        [
+          {
+            "node": "Aplicar COMPLIANCE-01",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicar COMPLIANCE-01": {
+      "main": [
+        [
+          {
+            "node": "Puente CRM — configurar Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puente CRM — configurar Airtable": {
+      "main": [
+        [
+          {
+            "node": "Responder a SiteGround",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-000000000001",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

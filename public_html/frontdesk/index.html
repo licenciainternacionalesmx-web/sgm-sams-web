@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SofIA Front Desk | SGM–SAMS</title><link rel="stylesheet" href="/assets/css/styles.css"></head>
+<body>
+<header class="site-header"><a class="brand" href="/"><span>SGM–SAMS</span><small>SofIA Front Desk</small></a><nav><a href="/">Inicio</a><a href="/membresias/">Membresías</a></nav></header>
+<main class="section"><div class="form-shell"><p class="eyebrow">Solicitud inicial</p><h1>Cuéntanos qué necesitas para tu viaje.</h1>
+<p class="notice">No envíes pagos, pasaportes ni documentos sensibles en este primer contacto. Un asesor te indicará el canal protegido correspondiente.</p>
+<form id="lead-form" class="lead-form" action="/api/lead.php" method="post">
+<label>Nombre completo<input name="name" required maxlength="120" autocomplete="name"></label>
+<label>WhatsApp<input name="whatsapp" required maxlength="24" inputmode="tel" autocomplete="tel"></label>
+<label>Correo<input name="email" type="email" maxlength="160" autocomplete="email"></label>
+<label>Ciudad y país<input name="location" maxlength="120"></label>
+<label>Servicio<select name="service" required><option value="">Selecciona</option><option>Nuevo trámite</option><option>Renovación</option><option>Actualización</option><option>Asistencia de viaje</option><option>Membresía</option><option>Duda legal</option></select></label>
+<label>País de destino<input name="destination" maxlength="100"></label>
+<label class="full">Comentarios<textarea name="message" rows="5" maxlength="1200"></textarea></label>
+<label class="full"><span><input type="checkbox" name="consent" value="yes" required> Autorizo el contacto y el tratamiento de estos datos para atender mi solicitud.</span></label>
+<div class="full actions"><button class="button primary" type="submit">Enviar solicitud</button><a class="button" href="https://wa.me/523311856308">WhatsApp</a></div>
+<p id="form-status" class="status full" role="status" aria-live="polite"></p>
+</form></div></main>
+<script src="/assets/js/app.js" defer></script>
+</body></html>
